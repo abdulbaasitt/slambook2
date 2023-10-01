@@ -1,12 +1,12 @@
 cmake_minimum_required( VERSION 2.8 )
 project( visualizeGeometry )
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++14")
 
-# 添加Eigen头文件
+# Add Eigen header file
 include_directories( "/usr/include/eigen3" )
 
-# 添加Pangolin依赖
+# Add Pangolin dependency
 find_package( Pangolin )
 include_directories( ${Pangolin_INCLUDE_DIRS} )
 

@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
      v_3d << 3, 2, 1;
      vd_3d << 4, 5, 6;
 
-     // In Eigen you can't mix two different types of matrices, like this is
-     // wrong Matrix<double, 2, 1> result_wrong_type = matrix_23 ∗ v_3d;
+     // In Eigen you can't mix two different types of matrices, like this is wrong 
+     // Matrix<double, 2, 1> result_wrong_type = matrix_23 * v_3d;
      // It should be explicitly converted
      
      Matrix<double, 2, 1> result = matrix_23.cast<double>() * v_3d;

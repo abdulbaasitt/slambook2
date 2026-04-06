@@ -1,0 +1,25 @@
+# Stale build artifacts
+**/CMakeCache.txt
+**/CMakeFiles/
+**/cmake_install.cmake
+**/Makefile
+!**/Makefile.am
+!3rdparty/**/Makefile
+
+# Pre-built binaries in repo root
+coordinateTransform
+eigenGeometry
+linearEqSolution
+matrixExtractAssign
+useGeometry
+useSophus
+helloSLAM
+
+# Git metadata (large, not needed in image)
+.git
+**/.git
+
+# Docker files
+Dockerfile
+docker/
+.dockerignore

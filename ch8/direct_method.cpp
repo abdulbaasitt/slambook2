@@ -22,7 +22,7 @@ typedef Eigen::Matrix<double, 2, 6> Matrix26d;
 typedef Eigen::Matrix<double, 6, 1> Vector6d;
 
 /// class for accumulator jacobians in parallel
-class JacobianAccumulator {
+class JacobianAccumulator : public cv::ParallelLoopBody {
 public:
     JacobianAccumulator(
         const cv::Mat &img1_,
@@ -32,6 +32,10 @@ public:
         Sophus::SE3d &T21_) :
         img1(img1_), img2(img2_), px_ref(px_ref_), depth_ref(depth_ref_), T21(T21_) {
         projection = VecVector2d(px_ref.size(), Eigen::Vector2d(0, 0));
+    }
+
+    void operator()(const cv::Range &range) const override {
+        const_cast<JacobianAccumulator*>(this)->accumulate_jacobian(range);
     }
 
     /// accumulate jacobians in a range
@@ -168,8 +172,7 @@ void DirectPoseEstimationSingleLayer(
 
     for (int iter = 0; iter < iterations; iter++) {
         jaco_accu.reset();
-        cv::parallel_for_(cv::Range(0, px_ref.size()),
-                          std::bind(&JacobianAccumulator::accumulate_jacobian, &jaco_accu, std::placeholders::_1));
+        cv::parallel_for_(cv::Range(0, px_ref.size()), jaco_accu);
         Matrix6d H = jaco_accu.hessian();
         Vector6d b = jaco_accu.bias();
 

@@ -15,7 +15,7 @@ string file_1 = "./LK1.png";  // first image
 string file_2 = "./LK2.png";  // second image
 
 /// Optical flow tracker and interface
-class OpticalFlowTracker {
+class OpticalFlowTracker : public cv::ParallelLoopBody {
 public:
     OpticalFlowTracker(
         const Mat &img1_,
@@ -26,6 +26,10 @@ public:
         bool inverse_ = true, bool has_initial_ = false) :
         img1(img1_), img2(img2_), kp1(kp1_), kp2(kp2_), success(success_), inverse(inverse_),
         has_initial(has_initial_) {}
+
+    void operator()(const Range &range) const override {
+        const_cast<OpticalFlowTracker*>(this)->calculateOpticalFlow(range);
+    }
 
     void calculateOpticalFlow(const Range &range);
 
@@ -186,8 +190,7 @@ void OpticalFlowSingleLevel(
     kp2.resize(kp1.size());
     success.resize(kp1.size());
     OpticalFlowTracker tracker(img1, img2, kp1, kp2, success, inverse, has_initial);
-    parallel_for_(Range(0, kp1.size()),
-                  std::bind(&OpticalFlowTracker::calculateOpticalFlow, &tracker, placeholders::_1));
+    parallel_for_(Range(0, kp1.size()), tracker);
 }
 
 void OpticalFlowTracker::calculateOpticalFlow(const Range &range) {
